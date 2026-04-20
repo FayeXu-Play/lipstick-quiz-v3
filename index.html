@@ -2,11 +2,11 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>巴黎气质测试</title>
+<title>Lipstick Personality Test 💄</title>
 
 <style>
 body {
-  font-family: -apple-system, BlinkMacSystemFont;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: linear-gradient(135deg, #ffdce2, #e4ecff);
   margin: 0;
   padding: 20px;
@@ -27,6 +27,7 @@ h1 {
   border-radius: 20px;
   margin-top: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  animation: fadeIn 0.4s ease;
 }
 
 button {
@@ -38,31 +39,31 @@ button {
   background: #ff4d6d;
   color: white;
   font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.poster {
-  background: linear-gradient(135deg, #ffccd5, #cdb4db);
-  padding: 30px;
-  border-radius: 20px;
-  color: #333;
-  text-align: center;
+button:hover {
+  transform: scale(1.03);
+  background: #ff2e55;
 }
 
-.poster h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.poster p {
-  font-size: 14px;
-  line-height: 1.6;
+.result img {
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 .tip {
   font-size: 12px;
-  text-align: center;
+  color: #888;
   margin-top: 10px;
-  color: #666;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(10px);}
+  to {opacity:1;}
 }
 </style>
 </head>
@@ -70,36 +71,36 @@ button {
 <body>
 
 <div class="container">
-<h1>✨ 巴黎气质测试 ✨</h1>
+  <h1>💄 Which Lipstick Shade Matches You?</h1>
 
-<div id="quiz"></div>
-<div id="result"></div>
-
+  <div id="quiz"></div>
+  <div id="result"></div>
 </div>
 
 <script>
+
 const questions = [
   {
-    text:"在圣米歇尔山的老书店翻阅旧书，你更迷恋哪种触感？",
+    text:"Q1: In a cozy old bookstore, what texture do you love?",
     options:[
-      {key:"A",text:"干燥厚实的旧书"},
-      {key:"B",text:"湿润细腻的油画"}
+      {key:"A",text:"Dry vintage paper"},
+      {key:"B",text:"Soft fresh paint"}
     ]
   },
   {
-    text:"如果在巴黎度过一个完美午后？",
+    text:"Q2: Your perfect afternoon?",
     options:[
-      {key:"A",text:"看先锋展"},
-      {key:"B",text:"晒太阳"},
-      {key:"C",text:"逛二手店"}
+      {key:"A",text:"Art exhibition"},
+      {key:"B",text:"Sun in the park"},
+      {key:"C",text:"Vintage shopping"}
     ]
   },
   {
-    text:"课堂汇报你想呈现？",
+    text:"Q3: Your presentation vibe?",
     options:[
-      {key:"A",text:"专业严密"},
-      {key:"B",text:"亲切自然"},
-      {key:"C",text:"C位闪耀"}
+      {key:"A",text:"Sharp & professional"},
+      {key:"B",text:"Warm & friendly"},
+      {key:"C",text:"Confident & shining"}
     ]
   }
 ];
@@ -126,11 +127,11 @@ const resultsMap = {
 };
 
 const descriptions = {
-"931 无拘奶杏":"你是那种安静却有力量的人。",
-"937 悸动玫瑰":"你带着距离感，却让人着迷。",
-"703 柔情肉桂":"你天生拥有松弛的高级感。",
-"721 千金芭乐":"你就是人群中的光。",
-"712 幸运锦鲤":"你走到哪里都是好运。"
+"931 无拘奶杏":"Quiet, gentle, but powerful.",
+"937 悸动玫瑰":"Cold, elegant, a little dangerous.",
+"703 柔情肉桂":"Effortlessly chic and relaxed.",
+"721 千金芭乐":"You are the main character.",
+"712 幸运锦鲤":"You bring luck everywhere."
 };
 
 const images = {
@@ -140,32 +141,52 @@ const images = {
   "931 无拘奶杏": "img/931.jpg",
   "937 悸动玫瑰": "img/937.jpg"
 };
-  
-let current=0;
-let answers="";
+
+let current = 0;
+let answers = "";
+let locked = false;
 
 function render(){
-  let q=questions[current];
-  let html=`<div class="card"><p>${q.text}</p>`;
+  const q = questions[current];
+
+  let html = `<div class="card"><p>${q.text}</p>`;
+
   q.options.forEach(o=>{
-    html+=`<button onclick="choose('${o.key}')">${o.text}</button>`;
+    html += `<button onclick="choose('${o.key}')">${o.text}</button>`;
   });
-  html+="</div>";
-  document.getElementById("quiz").innerHTML=html;
+
+  html += "</div>";
+
+  document.getElementById("quiz").innerHTML = html;
 }
 
 function choose(k){
-  answers+=k;
+  if(locked) return;
+  locked = true;
+
+  answers += k;
   current++;
-  if(current<questions.length){
-    render();
-  }else{
-    show();
-  }
+
+  setTimeout(()=>{
+    locked = false;
+
+    if(current < questions.length){
+      render();
+    } else {
+      show();
+    }
+  }, 200);
 }
 
-function show() {
+function show(){
   const resultText = resultsMap[answers];
+
+  if(!resultText){
+    alert("Something went wrong, try again!");
+    location.reload();
+    return;
+  }
+
   const desc = descriptions[resultText];
   const imgSrc = images[resultText];
 
@@ -173,28 +194,28 @@ function show() {
 
   document.getElementById("result").innerHTML = `
     <div class="card result">
+      
+      <img src="${imgSrc}">
 
-      <img src="${imgSrc}" 
-           style="width:100%; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.15);">
-
+      <p class="tip">Your Shade</p>
       <h2>${resultText}</h2>
+
       <p>${desc}</p>
 
-      <p style="margin-top:15px; font-size:14px; color:#666;">
-      I got "${resultText}" 💄 and it's way too accurate…
+      <p style="margin-top:15px;">
+      I got "${resultText}" 💄 and it's so accurate…
       </p>
 
-      <p style="font-size:12px; color:#999;">
-      📸 Screenshot & share your result
-      </p>
+      <p class="tip">📸 Screenshot & share</p>
 
-      <button onclick="location.reload()">再测一次</button>
+      <button onclick="location.reload()">Try Again</button>
 
     </div>
   `;
 }
 
 render();
+
 </script>
 
 </body>
