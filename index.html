@@ -21,6 +21,33 @@ h1 {
   text-align:center;
 }
 
+/* ⭐ 进度条 */
+.progress-wrap {
+  margin-top:15px;
+}
+
+.progress-text {
+  font-size:12px;
+  color:#666;
+  margin-bottom:6px;
+}
+
+.progress-bar {
+  width:100%;
+  height:6px;
+  background:#eee;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-inner {
+  height:100%;
+  width:0%;
+  background:#ff4d6d;
+  transition:0.3s;
+}
+
+/* 卡片 */
 .card {
   background:#fff;
   padding:20px;
@@ -29,7 +56,7 @@ h1 {
   box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-/* ⭐ 图片网格（关键） */
+/* 图片网格 */
 .option-grid {
   display: grid;
   gap: 12px;
@@ -40,8 +67,6 @@ h1 {
   border-radius:12px;
   overflow:hidden;
   cursor:pointer;
-  border:none;
-  padding:0;
   background:#fff;
   box-shadow:0 6px 15px rgba(0,0,0,0.08);
   transition:0.2s;
@@ -51,11 +76,12 @@ h1 {
   transform:scale(1.02);
 }
 
-/* ⭐ 图片统一大小 */
+/* ⭐ 改成完整显示图片 */
 .option img {
   width:100%;
-  height:140px;
-  object-fit:cover;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  background:#f7f7f7;
   display:block;
 }
 
@@ -64,7 +90,6 @@ h1 {
   font-size:13px;
 }
 
-/* 按钮 */
 .btn {
   width:100%;
   padding:12px;
@@ -88,40 +113,46 @@ h1 {
 <div class="container">
 <h1>Find Your Signature Lipstick Shade 💄</h1>
 
+<!-- ⭐ 进度条 -->
+<div class="progress-wrap">
+  <div class="progress-text" id="progressText">Question 1 / 3</div>
+  <div class="progress-bar">
+    <div class="progress-inner" id="progressBar"></div>
+  </div>
+</div>
+
 <div id="quiz"></div>
 <div id="result"></div>
 </div>
 
 <script>
 
-// ===== 问题（带图片）=====
 const questions = [
   {
     q:"Q1: In a cozy old bookstore near Mont Saint-Michel, what kind of texture draws you in?",
     o:[
-      ["A","Dry, thick pages with that nostalgic ink scent","img/book.jpg"],
-      ["B","Fresh paint — smooth, soft, and slightly glowing","img/paint.jpg"]
+      ["A","A. Dry, thick pages with that nostalgic ink scent","img/book.jpg"],
+      ["B","B. Fresh paint — smooth, soft, and slightly glowing","img/paint.jpg"]
     ]
   },
   {
     q:"Q2: What’s your perfect Paris afternoon?",
     o:[
-      ["A","Watching an avant-garde exhibition at the Pompidou, quietly observing","img/exhibition.jpg"],
-      ["B","Sitting in a green chair at the Tuileries, soaking up the sun and watching pigeons glide by","img/park.jpg"],
-      ["C","Wandering through vintage shops in Le Marais, hunting for a one-of-a-kind piece","img/vintage.jpg"]
+      ["A","A. Watching an avant-garde exhibition at the Pompidou","img/exhibition.jpg"],
+      ["B","B. Relaxing in the Tuileries garden","img/park.jpg"],
+      ["C","C. Exploring vintage shops in Le Marais","img/vintage.jpg"]
     ]
   },
   {
     q:"Q3: For an upcoming presentation, what vibe do you want to give off?",
     o:[
-      ["A","Sharp and professional","img/pre.jpg"],
-      ["B","Warm and friendly","img/soft.jpg"],
-      ["C","Confident and radiant","img/shine.jpg"]
+      ["A","A. Sharp and professional","img/pre.jpg"],
+      ["B","B. Warm and friendly","img/soft.jpg"],
+      ["C","C. Confident and radiant","img/shine.jpg"]
     ]
   }
 ];
 
-// ===== 结果 =====
 const map = {
 "AAA":"937 Heartbeat Rose",
 "AAB":"931 Bare Apricot",
@@ -143,16 +174,14 @@ const map = {
 "BCC":"712 Fortune Koi"
 };
 
-// ===== 描述 =====
 const desc = {
-"931 Bare Apricot":"Like a quiet café tucked away on the Left Bank, you carry a soft warmth that lingers.",
-"937 Heartbeat Rose":"Like a rose blooming in winter, you’re cool, composed, and quietly striking.",
-"703 Velvet Cinnamon":"Like sunlight spilling across a wooden floor, you embody effortless comfort.",
-"721 Radiant Guava":"Like the golden hour in Paris, you glow with a natural spotlight.",
-"712 Fortune Koi":"Like the first light of morning, you bring energy wherever you go."
+"931 Bare Apricot":"Like a quiet café tucked away on the Left Bank, you carry a soft warmth.",
+"937 Heartbeat Rose":"Like a rose blooming in winter, cool and quietly striking.",
+"703 Velvet Cinnamon":"Like sunlight on wood, effortless and calm.",
+"721 Radiant Guava":"Like golden hour, glowing and vibrant.",
+"712 Fortune Koi":"Like morning light, full of energy and luck."
 };
 
-// ===== 结果图片 =====
 const img = {
 "703 Velvet Cinnamon":"img/703.jpg",
 "712 Fortune Koi":"img/712.jpg",
@@ -164,8 +193,17 @@ const img = {
 let i = 0;
 let ans = "";
 
-// ===== 渲染问题 =====
+/* ⭐ 更新进度条 */
+function updateProgress(){
+  let percent = ((i)/questions.length)*100;
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").innerText = `Question ${i+1} / ${questions.length}`;
+}
+
+/* 渲染 */
 function render(){
+  updateProgress();
+
   let d = questions[i];
 
   let h = `<div class="card"><p>${d.q}</p><div class="option-grid">`;
@@ -184,7 +222,7 @@ function render(){
   document.getElementById("quiz").innerHTML = h;
 }
 
-// ===== 点击 =====
+/* 点击 */
 function clickA(k){
   if(i>=questions.length) return;
 
@@ -198,15 +236,11 @@ function clickA(k){
   }
 }
 
-// ===== 结果 =====
+/* 结果 */
 function show(){
   let r = map[ans];
 
-  if(!r){
-    alert("Error");
-    location.reload();
-    return;
-  }
+  document.querySelector(".progress-wrap").style.display = "none";
 
   document.getElementById("quiz").innerHTML = "";
 
@@ -224,7 +258,6 @@ function show(){
   `;
 }
 
-// 启动
 render();
 
 </script>
