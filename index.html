@@ -29,25 +29,51 @@ h1 {
   box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-button {
+/* ⭐ 图片网格（关键） */
+.option-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.option {
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+  border:none;
+  padding:0;
+  background:#fff;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  transition:0.2s;
+}
+
+.option:hover {
+  transform:scale(1.02);
+}
+
+/* ⭐ 图片统一大小 */
+.option img {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  display:block;
+}
+
+.option-text {
+  padding:10px;
+  font-size:13px;
+}
+
+/* 按钮 */
+.btn {
   width:100%;
   padding:12px;
-  margin-top:10px;
+  margin-top:15px;
   border:none;
   border-radius:10px;
   background:#ff4d6d;
   color:#fff;
   cursor:pointer;
-}
-
-button:active {
-  opacity:0.8;
-}
-
-img {
-  width:100%;
-  border-radius:12px;
-  margin-bottom:15px;
 }
 
 .small {
@@ -68,29 +94,29 @@ img {
 
 <script>
 
-// ===== 问题 =====
+// ===== 问题（带图片）=====
 const questions = [
   {
     q:"Q1: In a cozy old bookstore near Mont Saint-Michel, what kind of texture draws you in?",
     o:[
-      ["A","A. Dry, thick pages with that nostalgic ink scent"],
-      ["B","B. Fresh paint — smooth, soft, and slightly glowing"]
+      ["A","Dry, thick pages with that nostalgic ink scent","img/book.jpg"],
+      ["B","Fresh paint — smooth, soft, and slightly glowing","img/paint.jpg"]
     ]
   },
   {
     q:"Q2: What’s your perfect Paris afternoon?",
     o:[
-      ["A","A. Watching an avant-garde exhibition at the Pompidou, quietly observing"],
-      ["B","B. Sitting in a green chair at the Tuileries, soaking up the sun and watching pigeons glide by"],
-      ["C","C. Wandering through vintage shops in Le Marais, hunting for a one-of-a-kind piece"]
+      ["A","Watching an avant-garde exhibition","img/exhibition.jpg"],
+      ["B","Sitting in the Tuileries garden","img/park.jpg"],
+      ["C","Vintage shopping in Le Marais","img/vintage.jpg"]
     ]
   },
   {
-    q:"Q3：For an upcoming presentation, what vibe do you want to give off?",
+    q:"Q3: For an upcoming presentation, what vibe do you want to give off?",
     o:[
-      ["A","A. Sharp, structured, and completely on point"],
-      ["B","B. Warm, natural, and easy to connect with"],
-      ["C","C. Confident, radiant, and impossible to ignore"]
+      ["A","Sharp and professional","img/pre.jpg"],
+      ["B","Warm and friendly","img/soft.jpg"],
+      ["C","Confident and radiant","img/shine.jpg"]
     ]
   }
 ];
@@ -119,14 +145,14 @@ const map = {
 
 // ===== 描述 =====
 const desc = {
-"931 Bare Apricot":"Like a quiet café tucked away on the Left Bank, you carry a soft warmth that lingers. Understated yet thoughtful, your presence feels like a gentle conversation that stays with people long after it ends.",
-"937 Heartbeat Rose":"Like a rose blooming in winter, you’re cool, composed, and quietly striking. There’s a distance to your elegance — the kind that makes people look twice, drawn in without quite knowing why.",
-"703 Velvet Cinnamon":"Like sunlight spilling across a wooden floor, you embody effortless comfort. Nothing feels forced — your charm lives in the ease, the calm, the beauty of simply being.",
-"721 Radiant Guava":"Like the golden hour in Paris, you glow with a natural spotlight. Vibrant and alive, you turn ordinary moments into scenes worth remembering.",
-"712 Fortune Koi":"Like the first light of morning, you bring energy wherever you go. Bright, hopeful, and a little bit magical — being around you feels like good things are about to happen."
+"931 Bare Apricot":"Like a quiet café tucked away on the Left Bank, you carry a soft warmth that lingers.",
+"937 Heartbeat Rose":"Like a rose blooming in winter, you’re cool, composed, and quietly striking.",
+"703 Velvet Cinnamon":"Like sunlight spilling across a wooden floor, you embody effortless comfort.",
+"721 Radiant Guava":"Like the golden hour in Paris, you glow with a natural spotlight.",
+"712 Fortune Koi":"Like the first light of morning, you bring energy wherever you go."
 };
 
-// ===== 图片 =====
+// ===== 结果图片 =====
 const img = {
 "703 Velvet Cinnamon":"img/703.jpg",
 "712 Fortune Koi":"img/712.jpg",
@@ -141,19 +167,26 @@ let ans = "";
 // ===== 渲染问题 =====
 function render(){
   let d = questions[i];
-  let h = `<div class="card"><p>${d.q}</p>`;
+
+  let h = `<div class="card"><p>${d.q}</p><div class="option-grid">`;
 
   d.o.forEach(x=>{
-    h += `<button onclick="clickA('${x[0]}')">${x[1]}</button>`;
+    h += `
+      <div class="option" onclick="clickA('${x[0]}')">
+        <img src="${x[2]}">
+        <div class="option-text">${x[1]}</div>
+      </div>
+    `;
   });
 
-  h += "</div>";
+  h += "</div></div>";
+
   document.getElementById("quiz").innerHTML = h;
 }
 
 // ===== 点击 =====
 function clickA(k){
-  if(i>=questions.length) return; // 防重复点击
+  if(i>=questions.length) return;
 
   ans += k;
   i++;
@@ -170,7 +203,7 @@ function show(){
   let r = map[ans];
 
   if(!r){
-    alert("出错了");
+    alert("Error");
     location.reload();
     return;
   }
@@ -186,7 +219,7 @@ function show(){
 
       <p class="small">I got "${r}" 💄</p>
 
-      <button onclick="location.reload()">Try again</button>
+      <button class="btn" onclick="location.reload()">Try again</button>
     </div>
   `;
 }
