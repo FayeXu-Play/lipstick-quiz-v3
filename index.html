@@ -133,6 +133,14 @@ const descriptions = {
 "712 幸运锦鲤":"你走到哪里都是好运。"
 };
 
+const images = {
+  "703 柔情肉桂": "img/703.jpg",
+  "712 幸运锦鲤": "img/712.jpg",
+  "721 千金芭乐": "img/721.jpg",
+  "931 无拘奶杏": "img/931.jpg",
+  "937 悸动玫瑰": "img/937.jpg"
+};
+  
 let current=0;
 let answers="";
 
@@ -156,27 +164,33 @@ function choose(k){
   }
 }
 
-function show(){
-  let r=resultsMap[answers];
-  let d=descriptions[r];
+function showResult() {
+  const resultText = resultsMap[answers];
+  const desc = descriptions[resultText];
+  const imgSrc = images[resultText];
 
-  document.getElementById("quiz").style.display="none";
+  document.getElementById("quiz").style.display = "none";
 
-  document.getElementById("result").innerHTML=`
-  <div class="poster">
-    <h2>${r}</h2>
-    <p>${d}</p>
-    <p style="margin-top:20px;font-size:12px;">你的巴黎人格已解锁</p>
-  </div>
+  document.getElementById("result").innerHTML = `
+    <div class="card result">
 
-  <div class="tip">
-    📸 截图分享你的结果<br>
-    💬 文案：我测出了「${r}」，也太准了吧！
-  </div>
+      <img src="${imgSrc}" 
+           style="width:100%; border-radius:15px; margin-bottom:15px; box-shadow:0 8px 20px rgba(0,0,0,0.15);">
 
-  <div class="card">
-    <button onclick="location.reload()">再测一次</button>
-  </div>
+      <h2>${resultText}</h2>
+      <p>${desc}</p>
+
+      <p style="margin-top:15px; font-size:14px; color:#666;">
+      I got "${resultText}" 💄 and it's way too accurate…
+      </p>
+
+      <p style="font-size:12px; color:#999;">
+      📸 Screenshot & share your result
+      </p>
+
+      <button onclick="location.reload()">再测一次</button>
+
+    </div>
   `;
 }
 
