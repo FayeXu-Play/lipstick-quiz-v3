@@ -2,68 +2,57 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<title>Lipstick Personality Test 💄</title>
+<title>Lipstick Test 💄</title>
 
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #ffdce2, #e4ecff);
-  margin: 0;
-  padding: 20px;
+  background: linear-gradient(135deg,#ffdce2,#e4ecff);
+  margin:0;
+  padding:20px;
 }
 
 .container {
-  max-width: 500px;
-  margin: auto;
+  max-width:500px;
+  margin:auto;
 }
 
 h1 {
-  text-align: center;
+  text-align:center;
 }
 
 .card {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  margin-top: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  animation: fadeIn 0.4s ease;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  margin-top:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 12px;
-  background: #ff4d6d;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.2s;
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:#ff4d6d;
+  color:#fff;
+  cursor:pointer;
 }
 
-button:hover {
-  transform: scale(1.03);
-  background: #ff2e55;
+button:active {
+  opacity:0.8;
 }
 
-.result img {
-  width: 100%;
-  border-radius: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+img {
+  width:100%;
+  border-radius:12px;
+  margin-bottom:15px;
 }
 
-.tip {
-  font-size: 12px;
-  color: #888;
-  margin-top: 10px;
-}
-
-@keyframes fadeIn {
-  from {opacity:0; transform:translateY(10px);}
-  to {opacity:1;}
+.small {
+  font-size:12px;
+  color:#888;
 }
 </style>
 </head>
@@ -71,41 +60,43 @@ button:hover {
 <body>
 
 <div class="container">
-  <h1>💄 Which Lipstick Shade Matches You?</h1>
+<h1>💄 Lipstick Personality Test</h1>
 
-  <div id="quiz"></div>
-  <div id="result"></div>
+<div id="quiz"></div>
+<div id="result"></div>
 </div>
 
 <script>
 
+// ===== 问题 =====
 const questions = [
   {
-    text:"Q1: In a cozy old bookstore, what texture do you love?",
-    options:[
-      {key:"A",text:"Dry vintage paper"},
-      {key:"B",text:"Soft fresh paint"}
+    q:"你更喜欢哪种触感？",
+    o:[
+      ["A","干燥旧书"],
+      ["B","湿润油画"]
     ]
   },
   {
-    text:"Q2: Your perfect afternoon?",
-    options:[
-      {key:"A",text:"Art exhibition"},
-      {key:"B",text:"Sun in the park"},
-      {key:"C",text:"Vintage shopping"}
+    q:"完美下午？",
+    o:[
+      ["A","看展"],
+      ["B","晒太阳"],
+      ["C","逛二手"]
     ]
   },
   {
-    text:"Q3: Your presentation vibe?",
-    options:[
-      {key:"A",text:"Sharp & professional"},
-      {key:"B",text:"Warm & friendly"},
-      {key:"C",text:"Confident & shining"}
+    q:"汇报风格？",
+    o:[
+      ["A","专业"],
+      ["B","亲和"],
+      ["C","自信"]
     ]
   }
 ];
 
-const resultsMap = {
+// ===== 结果 =====
+const map = {
 "AAA":"937 悸动玫瑰",
 "AAB":"931 无拘奶杏",
 "AAC":"937 悸动玫瑰",
@@ -126,94 +117,81 @@ const resultsMap = {
 "BCC":"712 幸运锦鲤"
 };
 
-const descriptions = {
-"931 无拘奶杏":"Quiet, gentle, but powerful.",
-"937 悸动玫瑰":"Cold, elegant, a little dangerous.",
-"703 柔情肉桂":"Effortlessly chic and relaxed.",
-"721 千金芭乐":"You are the main character.",
-"712 幸运锦鲤":"You bring luck everywhere."
+// ===== 描述 =====
+const desc = {
+"931 无拘奶杏":"安静但有力量",
+"937 悸动玫瑰":"冷静又迷人",
+"703 柔情肉桂":"松弛又高级",
+"721 千金芭乐":"人群焦点",
+"712 幸运锦鲤":"自带好运"
 };
 
-const images = {
-  "703 柔情肉桂": "img/703.jpg",
-  "712 幸运锦鲤": "img/712.jpg",
-  "721 千金芭乐": "img/721.jpg",
-  "931 无拘奶杏": "img/931.jpg",
-  "937 悸动玫瑰": "img/937.jpg"
+// ===== 图片 =====
+const img = {
+"703 柔情肉桂":"img/703.jpg",
+"712 幸运锦鲤":"img/712.jpg",
+"721 千金芭乐":"img/721.jpg",
+"931 无拘奶杏":"img/931.jpg",
+"937 悸动玫瑰":"img/937.jpg"
 };
 
-let current = 0;
-let answers = "";
-let locked = false;
+let i = 0;
+let ans = "";
 
+// ===== 渲染问题 =====
 function render(){
-  const q = questions[current];
+  let d = questions[i];
+  let h = `<div class="card"><p>${d.q}</p>`;
 
-  let html = `<div class="card"><p>${q.text}</p>`;
-
-  q.options.forEach(o=>{
-    html += `<button onclick="choose('${o.key}')">${o.text}</button>`;
+  d.o.forEach(x=>{
+    h += `<button onclick="clickA('${x[0]}')">${x[1]}</button>`;
   });
 
-  html += "</div>";
-
-  document.getElementById("quiz").innerHTML = html;
+  h += "</div>";
+  document.getElementById("quiz").innerHTML = h;
 }
 
-function choose(k){
-  if(locked) return;
-  locked = true;
+// ===== 点击 =====
+function clickA(k){
+  if(i>=questions.length) return; // 防重复点击
 
-  answers += k;
-  current++;
+  ans += k;
+  i++;
 
-  setTimeout(()=>{
-    locked = false;
-
-    if(current < questions.length){
-      render();
-    } else {
-      show();
-    }
-  }, 200);
+  if(i < questions.length){
+    render();
+  } else {
+    show();
+  }
 }
 
+// ===== 结果 =====
 function show(){
-  const resultText = resultsMap[answers];
+  let r = map[ans];
 
-  if(!resultText){
-    alert("Something went wrong, try again!");
+  if(!r){
+    alert("出错了");
     location.reload();
     return;
   }
 
-  const desc = descriptions[resultText];
-  const imgSrc = images[resultText];
-
-  document.getElementById("quiz").style.display = "none";
+  document.getElementById("quiz").innerHTML = "";
 
   document.getElementById("result").innerHTML = `
-    <div class="card result">
-      
-      <img src="${imgSrc}">
+    <div class="card">
+      <img src="${img[r]}">
+      <p class="small">Your shade</p>
+      <h2>${r}</h2>
+      <p>${desc[r]}</p>
 
-      <p class="tip">Your Shade</p>
-      <h2>${resultText}</h2>
+      <p class="small">I got "${r}" 💄</p>
 
-      <p>${desc}</p>
-
-      <p style="margin-top:15px;">
-      I got "${resultText}" 💄 and it's so accurate…
-      </p>
-
-      <p class="tip">📸 Screenshot & share</p>
-
-      <button onclick="location.reload()">Try Again</button>
-
+      <button onclick="location.reload()">再测一次</button>
     </div>
   `;
 }
 
+// 启动
 render();
 
 </script>
